@@ -1,5 +1,6 @@
 import math
 from Food import Food
+from Creature import Creature
 from CONSTANTS import *
 import pygame
 def distance(pos1,pos2):
@@ -29,7 +30,11 @@ def check_for_death_and_multiply(creatures):
             creature.isAlive=False
     creatures.extend(newCreatures)
 
-def draw_Items(screen,creatures)->None:
+def draw_Creatures(screen,creatures)->None:
+    for creature in creatures:
+        pygame.draw.circle(screen, creature.color, creature.position, creature.size)
+        pygame.draw.circle(screen, (0, 0, 0), creature.position, creature.sensation_area, 1)
+def draw_Foods(screen,creatures)->None:
     for creature in creatures:
         pygame.draw.circle(screen, creature.color, creature.position, creature.size)
 def move (creatures)->None:
@@ -43,13 +48,15 @@ def avg_speed(creatures):
     for creature in creatures:
         avg+=creature.speed
     return avg/len(creatures)
-def Check(food,creatures):
+
+def checkCreaturesDeath(creatures):
     index=0
     while index<len(creatures):
         if not creatures[index].isAlive:
             del creatures[index]
         else:
             index+=1
+def CheckFoodEaten(food):
     index=0
     while index<len(food):
         if food[index].isEaten:
@@ -61,7 +68,11 @@ def generate_food(food,amount=NUMBER_OF_FOOD):
         return
     for _ in range(amount):
         food.append(Food())
-
+def generate_creatures():
+    creatures=[]
+    for i in range(NUMBER_OF_CREATURES):
+        creatures.append(Creature())
+    return creatures
 def Creatures_Scan(creatures,foods):
     for creature in creatures:
         creature.scan(foods)

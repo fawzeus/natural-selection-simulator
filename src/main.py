@@ -2,12 +2,8 @@ import pygame
 import sys
 import time
 from CONSTANTS import*
-from Creature import Creature
-from Food import Food
-import math
 import matplotlib.pyplot as plt
 import matplotlib
-import numpy as np
 from utils import *
 
 matplotlib.use('TkAgg')  # or 'Qt5Agg' depending on your environment
@@ -19,9 +15,8 @@ font = pygame.font.Font(None, 36)  # You can choose the font and size
 # Set up display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Natural Selection Simulator")
-creatures=[]
-for i in range(NUMBER_OF_CREATURES):
-    creatures.append(Creature())
+creatures=generate_creatures()
+
 food=[]
 generate_food(food)
 # Game loop
@@ -48,7 +43,6 @@ ax1.legend(loc='upper left')
 ax2.legend(loc='upper right')
 
 while True:
-    #amount=50
     step+=1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -60,18 +54,21 @@ while True:
     # Draw to the screen
     Creatures_Scan(creatures,food)
     screen.fill((255, 255, 255))  # Fill the screen with white
-    draw_Items(screen,creatures)
-    draw_Items(screen,food)
+    draw_Creatures(screen,creatures)
+    draw_Foods(screen,food)
     move(creatures)
     check_for_eat(creatures,food)
-    Check(food,creatures)
+    CheckFoodEaten(food)
     restart(creatures,food)
     if step==4000 or len(food)==0:
         check_for_death_and_multiply(creatures)
+        checkCreaturesDeath(creatures)
         generate_food(food,amount)
-        print(len(food))
         step=0
-        #amount-=1
+        if generation>50:
+            amount-=1
+        else:
+            amount+=1
         generation+=1
         x_axis.append(generation)
         y_axis_speed = avg_speed(creatures)
@@ -93,19 +90,25 @@ while True:
         ax2.relim()
         ax2.autoscale_view()
 
-        plt.pause(0.01)  # Pause to allow for dynamic updating
+        plt.pause(0.0001)  # Pause to allow for dynamic updating
 
 
     # Update display
     text= f"food : {len(food)}"
     text_render = font.render(text, True, (0, 0, 0))  
     text2=f"Creatures : {len(creatures)}"
+    #print(len(creatures))
     text_render2=font.render(text2, True, (0, 0, 0))  
     screen.blit(text_render, (15,15))
     screen.blit(text_render2,(15,50))
     
-    time.sleep(0.01)
+    time.sleep(0.001)
     pygame.display.flip()
+
+    if len(creatures) == 0:
+        pygame.quit() 
+        plt.show()  # Display the final graph
+        break
 
 # Quit Pygame
 pygame.quit()
