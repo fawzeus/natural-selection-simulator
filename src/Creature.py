@@ -46,10 +46,18 @@ class Creature:
         Crature Size : {self.size}
         """
     def move(self)->None:
-        if self._x>=HEIGHT-self.size and self.direction[0]>0 or self._x<=self.size and self.direction[0]<0:
-            self.direction[0]=self.direction[0]*-1
-        if self._y>=WIDTH-self.size and self.direction[1]>0 or self._y<=self.size and self.direction[1]<0:
-            self.direction[1]=self.direction[1]*-1
+        if self._x>=HEIGHT-self.size and self.direction[0]>0 :
+            self.angle= random()*pi+pi
+            self.direction= [sin(self.angle),cos(self.angle)]
+        if self._x<=self.size and self.direction[0]<0:
+            self.angle= random()*pi
+            self.direction= [sin(self.angle),cos(self.angle)]
+        if self._y>=WIDTH-self.size and self.direction[1]>0 :
+            self.angle= random()*pi/2+pi
+            self.direction= [sin(self.angle),cos(self.angle)]
+        if self._y<=self.size and self.direction[1]<0:
+            self.angle= random()*pi/2*choice([-1,1])
+            self.direction= [sin(self.angle),cos(self.angle)]
         self._x+=self.speed*self.direction[0]
         self._y+=self.speed*self.direction[1]
         self.position=(self._y,self._x)
@@ -69,21 +77,14 @@ class Creature:
                 type=0
             else:
                 size=randint(12,15)
-                speed=random()+0.2*self.speed
+                speed=random()+0.5*self.speed
                 color=(int(255*exp(-speed/5)),0,0)
                 type=1
         else:
-            if random()>0.2:
-                size=randint(12,15)
-                speed=random()+self.speed*0.2
-                color=(int(255*exp(-speed/5)),0,0)
-                type=1
-            else:
-                size=randint(12,15)+int(0.1*self.size)
-                speed=random()*0.5+0.1*self.speed
-                color=(0,255,0)
-                type=0
-
+            size=randint(12,15)
+            speed=random()+self.speed*0.5
+            color=(int(255*exp(-speed/5)),0,0)
+            type=1
         return Creature(self._x,self._y,color=color,speed=speed,size=size,type=type)
     def scan(self,foods):
         if len(foods) == 0 or self.moving_to_target==True:
