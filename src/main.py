@@ -101,7 +101,6 @@ while True:
     text_render2=font.render(text2, True, (0, 0, 0))  
     screen.blit(text_render, (15,15))
     screen.blit(text_render2,(15,50))
-    
     time.sleep(0.001)
     pygame.display.flip()
 
@@ -109,6 +108,5 @@ while True:
         pygame.quit() 
         plt.show()  # Display the final graph
         break
-
 # Quit Pygame
 pygame.quit()

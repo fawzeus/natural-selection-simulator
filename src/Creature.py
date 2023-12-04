@@ -3,9 +3,12 @@ from CONSTANTS import *
 from math import pi,sin,cos,exp,atan2
 import utils
 class Creature:
-    def __init__(self,X=None,Y=None,color=None,speed=None,size=None,type=None) -> None:
+    def __init__(self,X=None,Y=None,color=None,speed=None,size=None,type=None,sensation=None) -> None:
         self.age=0
-        self.sensation_area = 100
+        if sensation:
+            self.sensation_area=sensation
+        else:
+            self.sensation_area = 50
         self.target=None
         self.moving_to_target=False
         if type:
@@ -69,37 +72,38 @@ class Creature:
         speed=None
         color=None
         type=None
+        sensation=None
         if self.type==0:
             if random()>0.2:
                 size=randint(12,15)+int(0.1*self.size)
-                speed=random()*0.5+0.5
+                speed=(0.15*random()+0.9)*self.speed
                 color=(0,255,0)
                 type=0
+                sensation=(0.35*random()+0.9)*self.sensation_area
             else:
                 size=randint(12,15)
-                speed=random()+0.5*self.speed
+                speed=(0.2*random()+0.9)*self.speed
                 color=(int(255*exp(-speed/5)),0,0)
                 type=1
+                sensation=(0.25*random()+0.9)*self.sensation_area
         else:
             size=randint(12,15)
-            speed=random()+self.speed*0.5
+            speed=(0.2*random()+0.9)*self.speed
             color=(int(255*exp(-speed/5)),0,0)
+            sensation=(0.25*random()+0.9)*self.sensation_area
             type=1
-        return Creature(self._x,self._y,color=color,speed=speed,size=size,type=type)
+        return Creature(self._x,self._y,color=color,speed=speed,size=size,type=type,sensation=sensation)
     def scan(self,foods):
         if len(foods) == 0 or self.moving_to_target==True:
             return
         myy, myx = self.position
-        nearest_food = min(foods, key=lambda food: utils.distance(self.position, food.position))
-        if utils.distance(self.position, nearest_food.position)>self.sensation_area:
-            return
-        choices=[]
+        targeted_Food=[]
         for food in foods:
-            if utils.distance(self.position, food.position)<=self.sensation_area:
-                choices.append(food)
-        if len(choices)==0:
+            if utils.distance(self.position, food.position) <= self.sensation_area:
+                targeted_Food.append(food)
+        if len(targeted_Food)==0:
             return
-        nearest_food=choice(choices)
+        nearest_food = min(targeted_Food, key=lambda food: utils.distance(self.position, food.position))
         y, x = nearest_food.position
         y_diff, x_diff = y - myy, x - myx
 
